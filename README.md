@@ -2,7 +2,7 @@
 stm32F407vet6  
 FSMC 16bitów  
  ![mkstft35plytka](https://user-images.githubusercontent.com/115451739/198851506-df0f2cbf-dc51-4372-952d-bc34dbdcac6f.jpg)  
--Projekt w Stm32CubeIDE  
+Projekt w Stm32CubeIDE  
 Płytka MKS_TFT35 stosowana w drukarkach 3d   
 Wyświetlacz TFT 3,5" sterowany przez interfejsz równoległy FSMC 16bitów (Drivr ILI????)  
 
