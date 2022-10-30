@@ -37,12 +37,17 @@
 #include "TFT_ILI.h"
 
 
+
 #include "GFX_Color.h"
 #include "fonts/fonts.h"
 //#include "logo.h"
 //#include "tecza.h"
 #include "GFX_EnhancedFonts.h"
 #include "EnhancedFonts/arialBlack_20ptFontInfo.h"
+
+#include "XPT2064.h"
+
+#include "paint.h"
 
 
 /* USER CODE END Includes */
@@ -81,6 +86,18 @@ extern FIL USBHFile;       /* File object for USBH */
 
 uint8_t Bytes;
 char Data[128];
+
+
+uint8_t Msg[32];
+
+volatile uint16_t Xread;
+volatile uint16_t Yread;
+
+
+
+
+
+
 
 /* USER CODE END PV */
 
@@ -143,13 +160,27 @@ int main(void)
 
   ILI_Init();
 
-  ILI_ClearDisplay(ILI_YELLOW);
+  GFX_SetFont(font_8x5);
+  EF_SetFont(&arialBlack_20ptFontInfo);
 
-//  uint8_t Timer = HAL_GetTick();
+  XPT2046_Init(&hspi1, EXTI9_5_IRQn);
 
-//  uint8_t OneTime = 0;
-  uint32_t Timer = HAL_GetTick();
-  uint32_t OneTime=1;
+
+
+
+
+
+
+
+
+//  uint32_t Timer = HAL_GetTick();
+//  uint32_t OneTime=1;
+
+
+  DoCalibration();
+  ILI_ClearDisplay(ILI_WHITE);
+
+//  DoCalibration();
 
   /* USER CODE END 2 */
 
@@ -160,68 +191,85 @@ int main(void)
   while (1)
   {
 
+	  XPT2046_Task();
+
+	  Paint();
 
 
-	  switch(Appli_state)
-	  	  {
-	  		case APPLICATION_IDLE:
 
 
-	  			break;
-
-	  		case APPLICATION_START:
-	  			  retUSBH = f_mount(&USBHFatFS, (const TCHAR*)USBHPath, 0);
-	  			  if(retUSBH != FR_OK)
-	  			  {
-	  			  	  Bytes = sprintf(Data, "FatFS mount error.\n\r");
-	  			  	  HAL_UART_Transmit(&huart3, (uint8_t*)Data, Bytes, 1000);
-	  			  }
-	  			  else
-	  			  {
-	  				  Bytes = sprintf(Data, "FatFS mounted.\n\r");
-	  			  	  HAL_UART_Transmit(&huart3, (uint8_t*)Data, Bytes, 1000);
-	  			  }
-
-	  			break;
-
-	  		case APPLICATION_READY:
-
-	  			if((retUSBH == FR_OK) && ((HAL_GetTick() - Timer) > 4000))
 
 
-	  			{
-	  				  	Timer = HAL_GetTick();
-
-	  				  	HAL_GPIO_WritePin(LD1_GPIO_Port, LD1_Pin, 1);
-
-	  				  	DIR dj;
-	  				  	FILINFO fno;
-
-	  				  	retUSBH = f_chdrive(USBHPath);
-
-	  				  	retUSBH = f_findfirst(&dj, &fno, "", "*.jpg");  /* Start to search for photo files */
-
-	  				  	while (retUSBH == FR_OK && fno.fname[0] && OneTime)
-	  				  	{
-	  				  		ILI_DrawJPEG(0, 0, fno.fname);
-	  				  		retUSBH = f_findnext(&dj, &fno);
-	  				  		OneTime = 0;
-	  				  	}
-
-	  				  	f_closedir(&dj);
-		  			}
-
-		  			break;
-
-	  		case APPLICATION_DISCONNECT:
-	  			HAL_GPIO_WritePin(LD1_GPIO_Port, LD1_Pin, 0);
-	  			break;
-
-	  		default:
-	  			break;
-	  	}
 
 
+
+
+
+
+//
+//
+//
+//
+//	  switch(Appli_state)
+//	  	  {
+//	  		case APPLICATION_IDLE:
+//
+//
+//	  			break;
+//
+//	  		case APPLICATION_START:
+//	  			  retUSBH = f_mount(&USBHFatFS, (const TCHAR*)USBHPath, 0);
+//	  			  if(retUSBH != FR_OK)
+//	  			  {
+//	  			  	  Bytes = sprintf(Data, "FatFS mount error.\n\r");
+//	  			  	  HAL_UART_Transmit(&huart3, (uint8_t*)Data, Bytes, 1000);
+//	  			  }
+//	  			  else
+//	  			  {
+//	  				  Bytes = sprintf(Data, "FatFS mounted.\n\r");
+//	  			  	  HAL_UART_Transmit(&huart3, (uint8_t*)Data, Bytes, 1000);
+//	  			  }
+//
+//	  			break;
+//
+//	  		case APPLICATION_READY:
+//
+//	  			if((retUSBH == FR_OK) && ((HAL_GetTick() - Timer) > 4000))
+//
+//
+//	  			{
+//	  				  	Timer = HAL_GetTick();
+//
+//	  				  	HAL_GPIO_WritePin(LD1_GPIO_Port, LD1_Pin, 1);
+//
+//	  				  	DIR dj;
+//	  				  	FILINFO fno;
+//
+//	  				  	retUSBH = f_chdrive(USBHPath);
+//
+//	  				  	retUSBH = f_findfirst(&dj, &fno, "", "*.jpg");  /* Start to search for photo files */
+//
+//	  				  	while (retUSBH == FR_OK && fno.fname[0] && OneTime)
+//	  				  	{
+//	  				  		ILI_DrawJPEG(0, 0, fno.fname);
+//	  				  		retUSBH = f_findnext(&dj, &fno);
+//	  				  		OneTime = 0;
+//	  				  	}
+//
+//	  				  	f_closedir(&dj);
+//		  			}
+//
+//		  			break;
+//
+//	  		case APPLICATION_DISCONNECT:
+//	  			HAL_GPIO_WritePin(LD1_GPIO_Port, LD1_Pin, 0);
+//	  			break;
+//
+//	  		default:
+//	  			break;
+//	  	}
+//
+//
 
 
 
@@ -231,6 +279,10 @@ int main(void)
     MX_USB_HOST_Process();
 
     /* USER CODE BEGIN 3 */
+
+
+
+
   }
   /* USER CODE END 3 */
 }
@@ -296,9 +348,21 @@ static void MX_NVIC_Init(void)
   /* DMA2_Stream3_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(DMA2_Stream3_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(DMA2_Stream3_IRQn);
+  /* EXTI9_5_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(EXTI9_5_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
 }
 
 /* USER CODE BEGIN 4 */
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+	if(GPIO_Pin == TOUCH_IRQ_Pin)
+	{
+		XPT2046_IRQ();
+	}
+}
+
 
 /* USER CODE END 4 */
 

@@ -9,7 +9,7 @@
 #define INC_TFT_ILI_H_
 
 
-#define ILI_ROTATION 1 		// 0 - 0*, 1 - 90*, 2 - 180*, 3 - 270*
+#define ILI_ROTATION 3 		// 0 - 0*, 1 - 90*, 2 - 180*, 3 - 270*
 
 #define ILI_USE_SD_CARD		1
 #if (ILI_USE_SD_CARD == 1)

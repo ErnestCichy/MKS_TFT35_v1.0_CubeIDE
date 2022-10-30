@@ -61,10 +61,11 @@ void Error_Handler(void);
 #define BACKLIGHT_GPIO_Port GPIOA
 #define SPK_Pin GPIO_PIN_2
 #define SPK_GPIO_Port GPIOA
-#define CS_TOUCH_Pin GPIO_PIN_4
-#define CS_TOUCH_GPIO_Port GPIOC
-#define SPI1_INT_Pin GPIO_PIN_5
-#define SPI1_INT_GPIO_Port GPIOC
+#define TOUCH_CS_Pin GPIO_PIN_4
+#define TOUCH_CS_GPIO_Port GPIOC
+#define TOUCH_IRQ_Pin GPIO_PIN_5
+#define TOUCH_IRQ_GPIO_Port GPIOC
+#define TOUCH_IRQ_EXTI_IRQn EXTI9_5_IRQn
 #define LD1_Pin GPIO_PIN_0
 #define LD1_GPIO_Port GPIOB
 #define LD2_Pin GPIO_PIN_1

@@ -133,6 +133,7 @@ void ILI_WritePixel(int16_t x, int16_t y, uint16_t color)
 	{
 		// Set Window for 1x1 pixel
 		ILI_SetAddrWindow(x, y, 1, 1);
+		ILI_SendCommand(ILI_RAMWR);
 		// Push color bytes to RAM
 		ILI_SendData(color);
 	}
